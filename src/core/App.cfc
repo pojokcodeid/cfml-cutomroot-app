@@ -118,9 +118,14 @@ component {
             }
         }
 
+        // menangani kiriman json data atau post form
         local.content = {};
         if (len(trim(getHttpRequestData().content))) {
-            local.content = deserializeJson(getHttpRequestData().content);
+            try {
+                local.content = deserializeJson(getHttpRequestData().content);
+            } catch (any e) {
+                local.content = form; // fallback to form data if JSON deserialization fails
+            }
             arrayAppend(variables.paramsVariables, "content");
             arrayAppend(variables.params, local.content);
         }
@@ -133,9 +138,9 @@ component {
         //     params: variables.params
         // }
         
-        var controllerPath = "/#controllerFile.replace(".", "/")#.cfc";
+        var controllerPath = "/controllers/#replace(controllerFile, ".", "/", "all")#.cfc";
         if (fileExists(expandPath(controllerPath))) {
-            var controller = createObject("component", "#controllerFile#");
+            var controller = createObject("component", "controllers.#controllerFile#");
 
             if (structKeyExists(controller, controllerMethod)) {
                 return controller[controllerMethod](argumentCollection=paramsToStruct(params));

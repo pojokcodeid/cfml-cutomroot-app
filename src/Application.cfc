@@ -2,7 +2,18 @@ component {
 	this.name = "MyApplication"; // Nama aplikasi
 	this.applicationTimeout = createTimeSpan(0, 2, 0, 0); // Waktu kedaluwarsa aplikasi
 
+    globalConfig = expandPath("/configs/global.json");
+    if (fileExists(globalConfig)) {
+        datasourceConfig = deserializeJSON(fileRead(globalConfig));
+        this.datasource = structKeyArray(datasourceConfig.datasource)[1];
+        this.datasources = datasourceConfig.datasource;
+    } else {
+        writeDump("Datasource config file not found: #globalConfig#");
+        abort;
+    }
+
 	function onApplicationStart() {
+        application.baseURL = datasourceConfig.baseURL;
 		return true;
 	}
 

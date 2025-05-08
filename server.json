@@ -1,5 +1,5 @@
 {
-    "name":"lucee-dev",
+    "name":"rest-framework",
     "startTimeout":"3600",
     "app":{
         "cfengine":"lucee"
