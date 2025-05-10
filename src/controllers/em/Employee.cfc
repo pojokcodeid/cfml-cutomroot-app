@@ -51,6 +51,39 @@ component extends="core.BaseController" {
         }
     }
 
+    private void function uploadAttach(content={}){
+        if (structKeyExists(content, "lampiran")) { 
+            // Ambil informasi file upload
+            fileField = "lampiran";
+            uploadDir = expandPath("/public/uploads/");
+          
+            // Buat folder jika belum ada
+            if (!directoryExists(uploadDir)) {
+              directoryCreate(uploadDir);
+            }
+          
+            // Upload dan rename
+            uploadedFile = fileUpload(
+                destination = uploadDir, 
+                fileField = fileField, 
+                mode = "makeunique"
+            );
+            // Ambil ekstensi file original
+            fileExt = listLast(uploadedFile.serverFile, ".");
+          
+            // Generate nama UUID
+            uuidName = createUUID() & "." & fileExt;
+            content.lampiran = uuidName;
+            
+            // Rename file ke UUID
+            fileMove(
+              source = uploadedFile.serverDirectory & "/" & uploadedFile.serverFile,
+              destination = uploadDir & uuidName
+            );
+
+        }
+    }
+
     public struct function createData(content={}){
         try{
             var result = validate(content, rules);
@@ -62,6 +95,7 @@ component extends="core.BaseController" {
                     data: {}
                 };
             }
+            uploadAttach(content);
             return { 
                 code: 200,
                 success=true,
@@ -90,14 +124,26 @@ component extends="core.BaseController" {
                     data: {}
                 };
             }
-            var personal = emp.getById(id);
-            if (!structKeyExists(personal, "id")) {
+            var data = emp.getById(id);
+            if (!structKeyExists(data, "id")) {
                 return {
                     code: 404,
                     success: false,
                     message: "Not Found",
                     data: {}
                 };
+            }
+            // cek apakah lampiran ada isinya
+            if (structKeyExists(content, "lampiran") && len(trim(content.lampiran)) > 0) {
+                // hapus file lama
+                if (structKeyExists(data, "attachment")) {
+                    var fileToDelete = expandPath("/public/uploads/") & data.attachment;
+                    if (fileExists(fileToDelete)) {
+                        fileDelete(fileToDelete);
+                    }
+                }
+                // upload file baru
+                uploadAttach(content);
             }
             return { 
                 code: 200,

@@ -18,14 +18,15 @@ component{
     public array function getAllData(){
         local.personals = [];
         local.qPersonal = queryExecute(
-            "SELECT id, name, email, age FROM personal"
+            "SELECT id, name, email, age, attachment FROM personal"
         );
         for (var p in local.qPersonal) {
             arrayAppend(local.personals, {
                 id = p.id,
                 name = p.name,
                 email = p.email,
-                age = p.age
+                age = p.age,
+                attachment = p.attachment
             });
         }
         return local.personals;
@@ -33,7 +34,7 @@ component{
 
     public struct function getById(id){
         local.qPersonal = queryExecute(
-            "SELECT id, name, email, age FROM personal WHERE id = ?",
+            "SELECT id, name, email, age, attachment FROM personal WHERE id = ?",
             [id]
         );
         if (local.qPersonal.recordCount) {
@@ -41,7 +42,8 @@ component{
                 id = local.qPersonal.id,
                 name = local.qPersonal.name,
                 email = local.qPersonal.email,
-                age = local.qPersonal.age
+                age = local.qPersonal.age,
+                attachment = local.qPersonal.attachment
             };
         }
         return {}
@@ -51,17 +53,24 @@ component{
         local.dataToInsert = {
             name = {value=content.name, sqltype="CF_SQL_VARCHAR"},
             email = {value=content.email, sqltype="CF_SQL_VARCHAR"},
-            age = {value=content.age, sqltype="CF_SQL_INTEGER"}
+            age = {value=content.age, sqltype="CF_SQL_INTEGER"},
+            attachment = {value=content.lampiran, sqltype="CF_SQL_VARCHAR"}
         };
         local.qInsert = queryExecute(
-            "INSERT INTO personal (name, email, age) VALUES (:name, :email, :age)",
+            "INSERT INTO personal (name, email, age, attachment) VALUES (:name, :email, :age, :attachment)",
             local.dataToInsert,
             {
                 result: "insertResult" // penting untuk dapatkan generatedKey
             }
         );
         lastInsertedId = val(insertResult.generatedKey);
-        return {id=lastInsertedId, name=content.name, email=content.email, age=content.age};
+        return {
+            id=lastInsertedId, 
+            name=content.name, 
+            email=content.email, 
+            age=content.age, 
+            attachment=content.lampiran
+        };
     }
 
     public struct function updateData(content){
@@ -71,15 +80,21 @@ component{
             email = {value=content.email, sqltype="CF_SQL_VARCHAR"},
             age = {value=content.age, sqltype="CF_SQL_INTEGER"}
         };
+        if (len(content.lampiran)) {
+            local.dataToUpdate.attachment = {value=content.lampiran, sqltype="CF_SQL_VARCHAR"};
+        }
         local.qUpdate = queryExecute(
-            "UPDATE personal SET name = :name, email = :email, age = :age WHERE id = :id",
+            "UPDATE personal SET name = :name, email = :email, age = :age " &
+            (structKeyExists(local.dataToUpdate, "attachment") ? ", attachment = :attachment" : "") &
+            " WHERE id = :id",
             local.dataToUpdate
         );
         return { 
             id = content.id,
             name = content.name,
             email = content.email,
-            age = content.age
+            age = content.age,
+            attachment = content.lampiran
 		};
     }
 

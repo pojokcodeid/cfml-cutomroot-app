@@ -1,11 +1,26 @@
 ### create employee
 POST http://localhost:8888/employee
-Content-Type: application/json
-{
-    "name":"Pojok Code",
-    "email":"coba@email.com",
-    "age":20
-}
+Content-Type: multipart/form-data; boundary=WebKitFormBoundary
+
+--WebKitFormBoundary
+Content-Disposition: form-data; name="name"
+
+Pojok Code 
+--WebKitFormBoundary
+Content-Disposition: form-data; name="email"
+
+coba@email.com
+--WebKitFormBoundary
+Content-Disposition: form-data; name="age"
+
+20
+--WebKitFormBoundary
+Content-Disposition: form-data; name="lampiran"; filename="example.png"
+Content-Type: image/png
+
+< ./example.png
+
+--WebKitFormBoundary
 
 ### get all data
 GET http://localhost:8888/employee
@@ -14,13 +29,28 @@ GET http://localhost:8888/employee
 GET http://localhost:8888/employee/8
 
 ### update data
-PUT http://localhost:8888/employee/8
-Content-Type: application/json
-{
-    "name":"Pojok Code",
-    "email":"coba@email.com",
-    "age":20
-}
+PUT http://localhost:8888/employee/53
+Content-Type: multipart/form-data; boundary=WebKitFormBoundary
+
+--WebKitFormBoundary
+Content-Disposition: form-data; name="name"
+
+Pojok Code Updated 
+--WebKitFormBoundary
+Content-Disposition: form-data; name="email"
+
+coba@email.com
+--WebKitFormBoundary
+Content-Disposition: form-data; name="age"
+
+20
+--WebKitFormBoundary
+Content-Disposition: form-data; name="lampiran"; filename="example.png"
+Content-Type: image/png
+
+< ./example.png
+
+--WebKitFormBoundary
 
 ### delete data
-DELETE http://localhost:8888/employee/41
+DELETE http://localhost:8888/employee/53
