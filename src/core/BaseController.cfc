@@ -30,4 +30,33 @@ component extends="core.Message" {
         cflocation(url=application.baseURL & parhUrl);
     }
 
+    function upload(path, file){
+        uploadDir = path;
+        
+        // Buat folder jika belum ada
+        if (!directoryExists(uploadDir)) {
+            directoryCreate(uploadDir);
+        }
+        
+        // Upload dan rename
+        uploadedFile = fileUpload(
+            destination = uploadDir, 
+            fileField = file, 
+            mode = "makeunique"
+        );
+        // Ambil ekstensi file original
+        fileExt = listLast(uploadedFile.serverFile, ".");
+        
+        // Generate nama UUID
+        uuidName = createUUID() & "." & fileExt;
+        
+        // Rename file ke UUID
+        fileMove(
+            source = uploadedFile.serverDirectory & "/" & uploadedFile.serverFile,
+            destination = uploadDir & uuidName
+        );
+
+        return uuidName;
+    }
+
 }

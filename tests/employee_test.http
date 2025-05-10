@@ -26,10 +26,10 @@ Content-Type: image/png
 GET http://localhost:8888/employee
 
 ### get data by id
-GET http://localhost:8888/employee/8
+GET http://localhost:8888/employee/60
 
 ### update data
-PUT http://localhost:8888/employee/53
+PUT http://localhost:8888/employee/61
 Content-Type: multipart/form-data; boundary=WebKitFormBoundary
 
 --WebKitFormBoundary
@@ -53,4 +53,4 @@ Content-Type: image/png
 --WebKitFormBoundary
 
 ### delete data
-DELETE http://localhost:8888/employee/53
+DELETE http://localhost:8888/employee/61
