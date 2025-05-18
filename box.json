@@ -4,11 +4,15 @@
 	"type": "app",
 	"version": "1.0.0",
 	"dependencies": {
-		"lucee": "6.2.0"
+		"lucee": "6.2.0",
+		"jwt-cfml":"^1.2.1"
 	},
 	"scripts": {
 		"start": "server start",
 		"restart": "server restart",
 		"stop": "server stop"
-	}
+	},
+	 "installPaths":{
+        "jwt-cfml":"src/modules/jwtcfml/"
+    }
 }

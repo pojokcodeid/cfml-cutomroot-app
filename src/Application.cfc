@@ -4,20 +4,32 @@ component {
 
     globalConfig = expandPath("/configs/global.json");
     if (fileExists(globalConfig)) {
-        datasourceConfig = deserializeJSON(fileRead(globalConfig));
-        this.datasource = structKeyArray(datasourceConfig.datasource)[1];
-        this.datasources = datasourceConfig.datasource;
+        config = deserializeJSON(fileRead(globalConfig));
+        this.datasource = structKeyArray(config.datasource)[1];
+        this.datasources = config.datasource;
     } else {
         writeDump("Datasource config file not found: #globalConfig#");
         abort;
     }
 
 	function onApplicationStart() {
-        application.baseURL = datasourceConfig.baseURL;
+        application.baseURL = config.baseURL;
+        application.emailFrom = config.emailFrom;
 		return true;
 	}
 
 	function onRequestStart(string targetPage) {
+        // Allow all origins (or specify the one you want)
+        header name="Access-Control-Allow-Origin" value="*";
+        header name="Access-Control-Allow-Methods" value="GET, POST, PUT, DELETE, OPTIONS";
+        header name="Access-Control-Allow-Headers" value="Content-Type, Authorization";
+        
+        // Handle preflight request
+        if (cgi.request_method == "OPTIONS") {
+            // Stop processing further
+            abort;
+        }
+        return true;
 	}
 
 	this.onError = function(exception, eventname){
@@ -48,5 +60,16 @@ component {
             errorcode=uuid
         },true));
         return false;
+    }
+
+    // gunakan ini untuk config mail server 
+    // https://myaccount.google.com/apppasswords
+    this.mail={
+        server = config.gmail.host,
+        username = config.gmail.username, // ganti dengan email kamu
+        password = config.gmail.password,    // ganti dengan App Password (bukan password biasa)
+        port = config.gmail.port,
+        useSSL = config.gmail.usessl,
+        useTLS = config.gmail.usetls // Gmail SSL pakai port 465
     }
 }

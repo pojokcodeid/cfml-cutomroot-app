@@ -4,12 +4,11 @@ component {
         app = new core.App();
         app.setDefaultController("Default");
         app.setDefaultControllerMethod("index");
-        app.get("/employee/say-hay", { controller: "em.EmployeeController", method: "sayHay"});
-        app.get("/employee", { controller: "em.EmployeeController", method: "getAll"});
-        app.get("/employee/:id", { controller: "em.EmployeeController", method: "getById"});
-        app.post("/employee", { controller: "em.EmployeeController", method: "createData"});
-        app.put("/employee/:id", { controller: "em.EmployeeController", method: "updateData"});
-        app.delete("/employee/:id", { controller: "em.EmployeeController", method: "deleteData"});
+        app.post("/user/register", { controller: "em.UserController", method: "register"});
+        app.get("/user/activate/:uuid", { controller: "em.UserController", method: "activate"});
+        app.post("/user/login", { controller: "em.UserController", method: "login"});
+        app.get("/user/refresh", { controller: "em.UserController", method: "refreshToken"});
+        app.put("/user/update", { controller: "em.UserController", method: "update"});
         return app.run();
     }
 }
