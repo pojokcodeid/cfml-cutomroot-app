@@ -8,7 +8,8 @@ component extends="core.Message" {
         for (var key in content) {
             variables[key] = content[key];
         }
-        if (fileExists("/views/#replace(filePath, ".", "/", "all")#.cfm")) {
+        var viewPath = "/views/#replace(filePath, ".", "/", "all")#.cfm";
+        if (fileExists(expandPath(viewPath))) {
             include "/views/templates/header.cfm";
             include "/views/#replace(filePath, ".", "/", "all")#.cfm";
             include "/views/templates/footer.cfm";
